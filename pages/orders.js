@@ -1,12 +1,12 @@
 import Head from "next/head";
 import Layout from "../components/Layout";
 
-const Index = () => (
+const Orders = () => (
   <div>
     <Layout>
-      <h1 className="text-2xl text-gray-800 font-light">Clients</h1>
+    <h1 className="text-2xl text-gray-800 font-light">Orders</h1>
     </Layout>
   </div>
 );
 
-export default Index;
+export default Orders;
