@@ -2,8 +2,23 @@ import React from "react";
 import Layout from "../components/Layout";
 import { useFormik, yupToFormErrors } from "formik";
 import * as Yup from "yup";
+import { useMutation, gql } from "@apollo/client";
+
+const NEW_USER = gql`
+  mutation newUser($input: UserInput) {
+    newUser(input: $input) {
+      id
+      name
+      lastName
+      email
+    }
+  }
+`;
 
 const NewAccount = () => {
+  // Mutation to create new users
+  const [ newUser ] = useMutation(NEW_USER);
+
   // Validation of the formulary
   const formik = useFormik({
     initialValues: {
@@ -23,13 +38,26 @@ const NewAccount = () => {
         .required("A password is required.")
         .min(6, "The password must be at least 6 characters long."),
     }),
-    onSubmit: (values) => {
-      console.log("sending");
-      console.log(values);
+    onSubmit: async (values) => {
+      const { name, lastName, email, password } = values;
+
+      try {
+        const { data } = await newUser({
+          variables: {
+            input: {
+              name,
+              lastName,
+              email,
+              password
+            }
+          }
+        });
+        console.log(data);
+      } catch (error) {
+        console.log(error)
+      }
     },
   });
-
-  const { name, lastName, email, password } = formik.values;
 
   return (
     <Layout>
@@ -54,13 +82,13 @@ const NewAccount = () => {
                 id="name"
                 type="text"
                 placeholder="User name"
-                value={name}
+                value={formik.values.name}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
               />
             </div>
 
-            {formik.errors.name ? (
+            { formik.touched.name && formik.errors.name ? (
               <div className="my-2 bg-red-100 border-l-4 border-red-500 text-red-700 p-4">
                 <p className="font-bold">Error</p>
                 <p>{formik.errors.name}</p>
@@ -79,13 +107,13 @@ const NewAccount = () => {
                 id="lastName"
                 type="text"
                 placeholder="User last name"
-                value={lastName}
+                value={formik.values.lastName}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
               />
             </div>
 
-            {formik.errors.lastName ? (
+            {formik.touched.lastName && formik.errors.lastName ? (
               <div className="my-2 bg-red-100 border-l-4 border-red-500 text-red-700 p-4">
                 <p className="font-bold">Error</p>
                 <p>{formik.errors.lastName}</p>
@@ -104,12 +132,13 @@ const NewAccount = () => {
                 id="email"
                 type="email"
                 placeholder="User email"
-                value={email}
+                value={formik.values.email}
                 onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
               />
             </div>
 
-            {formik.errors.email ? (
+            { formik.touched.email && formik.errors.email ? (
               <div className="my-2 bg-red-100 border-l-4 border-red-500 text-red-700 p-4">
                 <p className="font-bold">Error</p>
                 <p>{formik.errors.email}</p>
@@ -128,12 +157,13 @@ const NewAccount = () => {
                 id="password"
                 type="password"
                 placeholder="User password"
-                value={password}
+                value={formik.values.password}
                 onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
               />
             </div>
 
-            {formik.errors.password ? (
+            { formik.touched.password && formik.errors.password ? (
               <div className="my-2 bg-red-100 border-l-4 border-red-500 text-red-700 p-4">
                 <p className="font-bold">Error</p>
                 <p>{formik.errors.password}</p>
