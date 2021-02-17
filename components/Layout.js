@@ -14,7 +14,7 @@ const Layout = ({ children }) => {
           rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css"
           integrity="sha512-NhSC1YmyruXifcj/KFRWoC561YpHpc5Jtzgvbuzx5VozKpWvQ+4nXhPdFgmx8xqexRcpAglTj9sIBWINXa8x5w=="
-          crossorigin="anonymous"
+          crossOrigin="anonymous"
         />
         <link
           href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css"
@@ -22,7 +22,7 @@ const Layout = ({ children }) => {
         ></link>
       </Head>
 
-      {router.pathname === "/login" || router.pathname === "/newaccount" ? (
+      {router.pathname === "/login" || router.pathname === "/signup" ? (
         <div className="bg-gray-800 min-h-screen flex flex-col justify-center">
           <div>
             {children}    

@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import { useRouter } from "next/router";
 import Layout from "../components/Layout";
 import { useFormik, yupToFormErrors } from "formik";
 import * as Yup from "yup";
@@ -15,9 +16,15 @@ const NEW_USER = gql`
   }
 `;
 
-const NewAccount = () => {
+const SignUp = () => {
+  // State of the message when user is registered
+  const [message, setMessage] = useState(null);
+
   // Mutation to create new users
-  const [ newUser ] = useMutation(NEW_USER);
+  const [newUser] = useMutation(NEW_USER);
+
+  // Routing
+  const router = useRouter();
 
   // Validation of the formulary
   const formik = useFormik({
@@ -48,21 +55,39 @@ const NewAccount = () => {
               name,
               lastName,
               email,
-              password
-            }
-          }
+              password,
+            },
+          },
         });
+
         console.log(data);
+
+        setMessage(`The user ${data.newUser.name} was created successfully.`);
+        setTimeout(() => {
+          setMessage(null);
+          router.push("/login");
+        }, 3000);
       } catch (error) {
-        console.log(error)
+        setMessage(error.message.replace("GraphQL error: ", ""));
+        setTimeout(() => setMessage(null), 3000);
       }
     },
   });
 
+  const showMessage = () => {
+    return (
+      <div className="bg-white py-2 px-3 w-full my-3 max-w-sm text-center mx-auto">
+        <p>{message}</p>
+      </div>
+    );
+  };
+
   return (
     <Layout>
+      {message && showMessage()}
+
       <h1 className="text-center text-2xl text-white font-light">
-        New Account
+        New User
       </h1>
       <div className="flex justify-center mt-5">
         <div className="w-full max-w-sm">
@@ -88,7 +113,7 @@ const NewAccount = () => {
               />
             </div>
 
-            { formik.touched.name && formik.errors.name ? (
+            {formik.touched.name && formik.errors.name ? (
               <div className="my-2 bg-red-100 border-l-4 border-red-500 text-red-700 p-4">
                 <p className="font-bold">Error</p>
                 <p>{formik.errors.name}</p>
@@ -138,7 +163,7 @@ const NewAccount = () => {
               />
             </div>
 
-            { formik.touched.email && formik.errors.email ? (
+            {formik.touched.email && formik.errors.email ? (
               <div className="my-2 bg-red-100 border-l-4 border-red-500 text-red-700 p-4">
                 <p className="font-bold">Error</p>
                 <p>{formik.errors.email}</p>
@@ -163,7 +188,7 @@ const NewAccount = () => {
               />
             </div>
 
-            { formik.touched.password && formik.errors.password ? (
+            {formik.touched.password && formik.errors.password ? (
               <div className="my-2 bg-red-100 border-l-4 border-red-500 text-red-700 p-4">
                 <p className="font-bold">Error</p>
                 <p>{formik.errors.password}</p>
@@ -182,4 +207,4 @@ const NewAccount = () => {
   );
 };
 
-export default NewAccount;
+export default SignUp;
