@@ -3,6 +3,7 @@ import Layout from "../components/Layout";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useMutation, gql } from "@apollo/client";
+import { useRouter } from "next/router";
 
 const AUTHENTICATE__USER = gql`
   mutation authenticateUser($input: AuthenticateInput) {
@@ -13,6 +14,9 @@ const AUTHENTICATE__USER = gql`
 `;
 
 const Login = () => {
+  // routing
+  const router = useRouter();
+
   const [message, setMessage] = useState(null);
 
   // Mutation to authenticate users in apollo
@@ -41,9 +45,16 @@ const Login = () => {
             }
           }
         });
-        console.log(data);
+        setMessage("Authenticating...");
+        const { token } = data.authenticateUser;
+        localStorage.setItem("token", token);
+        setTimeout(() => {
+          setMessage(null);
+          router.push("/");
+        }, 2000);
       } catch (error) {
         setMessage(error.message.replace("GraphQL error: ", ""));
+        setTimeout(() => setMessage(null), 3000);
       }
     },
   });
