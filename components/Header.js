@@ -18,10 +18,12 @@ const Header = () => {
   const { data, loading, error } = useQuery(OBTAIN__USER);
 
   // While loading, prevent access to data.
-  if (loading) return "Loading...";
+  if (loading) return null;
 
   // If there is no data, push to login
-  if (!data) return router.push("/login");
+  if (!data) {
+    return router.push("/login");
+  }
 
   const { name, lastName } = data.obtainUser;
 
