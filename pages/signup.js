@@ -21,7 +21,7 @@ const SignUp = () => {
   const [message, setMessage] = useState(null);
 
   // Mutation to create new users
-  const [newUser] = useMutation(NEW_USER);
+  const [ newUser ] = useMutation(NEW_USER);
 
   // Routing
   const router = useRouter();
@@ -59,9 +59,7 @@ const SignUp = () => {
             },
           },
         });
-
-        console.log(data);
-
+ 
         setMessage(`The user ${data.newUser.name} was created successfully.`);
         setTimeout(() => {
           setMessage(null);

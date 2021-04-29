@@ -6,7 +6,7 @@ import * as Yup from "yup";
 import { gql, useMutation } from "@apollo/client";
 import { useRouter } from "next/router";
 
-const NEW__CLIENT = gql`
+const NEW_CLIENT = gql`
   mutation newClient($input: ClientInput) {
     newClient(input: $input) {
       id
@@ -22,7 +22,7 @@ const NEW__CLIENT = gql`
 const NewClient = () => {
 
   // Mutation to create new clients
-  const [ newClient ] = useMutation(NEW__CLIENT);
+  const [ newClient ] = useMutation(NEW_CLIENT);
 
   const router = useRouter();
 
@@ -59,7 +59,7 @@ const NewClient = () => {
             }
           }
         });
-        // console.log(data.newClient);
+        console.log(data.newClient);
         router.push("/");
       } catch (error) {
         console.log(error);
