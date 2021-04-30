@@ -70,7 +70,6 @@ const NewClient = () => {
           }
         });
 
-        console.log(data);
         router.push("/");
       } catch (error) {
         setMessage(error.message.replace('GraphQL error: ', ''));
@@ -81,14 +80,6 @@ const NewClient = () => {
       }
     },
   });
-
-  const showMessage = () => {
-    return (
-      <div className="bg-red-100 w-full mt-5 p-2 text-center mx-auto">
-        <p>{message}</p>
-      </div>
-    );
-  };
 
   return (
     <Layout>
