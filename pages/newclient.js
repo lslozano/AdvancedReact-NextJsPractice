@@ -1,30 +1,40 @@
-import React from "react";
+import React, { useState } from "react";
 import Layout from "../components/Layout";
 
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { gql, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { useRouter } from "next/router";
 
-const NEW_CLIENT = gql`
-  mutation newClient($input: ClientInput) {
-    newClient(input: $input) {
-      id
-      name
-      lastName
-      company
-      email
-      phone
-    }
-  }
-`
+
+import { OBTAIN_CLIENTS_PER_SELLER } from '../services/queries';
+import { NEW_CLIENT } from '../services/mutations';
 
 const NewClient = () => {
 
-  // Mutation to create new clients
-  const [ newClient ] = useMutation(NEW_CLIENT);
-
   const router = useRouter();
+
+  const [message, setMessage] = useState(null);
+
+  // Mutation to create new clients
+  const [ newClient ] = useMutation(NEW_CLIENT, {
+    // updates copy of cache with the new data coming from newClient
+    update(cache, { data: { newClient } }) {
+      // Obtain the object of the cache that we want to update
+      const { obtainClientsPerSeller } = cache.readQuery({ query: OBTAIN_CLIENTS_PER_SELLER })
+
+      // Rewrite cache - cache must never be modified
+      // With writeQuery you can rewrite without mutating the object.
+      cache.writeQuery({
+        // What query you will use to modify
+        // The data you will use to modify
+        query: OBTAIN_CLIENTS_PER_SELLER,
+        data: { 
+          obtainClientsPerSeller: [...obtainClientsPerSeller, newClient]
+        }
+      })
+    }
+  });
 
   const formik = useFormik({
     initialValues: {
@@ -59,16 +69,30 @@ const NewClient = () => {
             }
           }
         });
-        console.log(data.newClient);
+
+        console.log(data);
         router.push("/");
       } catch (error) {
-        console.log(error);
+        setMessage(error.message.replace('GraphQL error: ', ''));
+
+        setTimeout(() => {
+          setMessage(null);
+        }, 1500);
       }
     },
   });
 
+  const showMessage = () => {
+    return (
+      <div className="bg-red-100 w-full mt-5 p-2 text-center mx-auto">
+        <p>{message}</p>
+      </div>
+    );
+  };
+
   return (
     <Layout>
+      
       <h1 className="text-2xl text-gray-800 font-light">New Client</h1>
 
       <div className="flex justify-center mt-5">
@@ -191,12 +215,11 @@ const NewClient = () => {
                 onBlur={formik.handleBlur}
               />
             </div>
-
-            <input
-              type="submit"
-              className="bg-gray-800 w-full mt-5 p-2 text-white upperacase font-bold hover:bg-gray-900"
-              value="Register client"
-            />
+              <input
+                type="submit"
+                className={message ? "bg-red-100 w-full mt-5 p-2 upperacase" : "bg-gray-800 w-full mt-5 p-2 text-white upperacase font-bold hover:bg-gray-900"}
+                value={message ? message : 'Register client'}
+              />
           </form>
         </div>
       </div>

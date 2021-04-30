@@ -1,22 +1,9 @@
 import Layout from "../components/Layout";
-import { useQuery, gql } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
 import Link from "next/link";
 
-const OBTAIN__CLIENTS__PER__SELLER = gql`
-  query obtainClientsPerSeller {
-    obtainClientsPerSeller {
-      id
-      name
-      lastName
-      company
-      email
-      phone
-      created
-      seller
-    }
-  }
-`;
+import { OBTAIN_CLIENTS_PER_SELLER } from '../services/queries';
 
 const newClientButtonStyles = `
   bg-blue-800 
@@ -38,7 +25,7 @@ const Index = () => {
 
   // Apollo query for clients.
   // We have access to this three values:
-  const { data, loading, error } = useQuery(OBTAIN__CLIENTS__PER__SELLER);
+  const { data, loading, error } = useQuery(OBTAIN_CLIENTS_PER_SELLER);
 
   if (loading) return "Loading...";
 

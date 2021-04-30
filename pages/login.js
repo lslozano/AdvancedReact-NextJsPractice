@@ -2,16 +2,10 @@ import React, { useState } from "react";
 import Layout from "../components/Layout";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { useMutation, gql } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { useRouter } from "next/router";
 
-const AUTHENTICATE__USER = gql`
-  mutation authenticateUser($input: AuthenticateInput) {
-    authenticateUser(input: $input) {
-      token
-    }
-  }
-`;
+import { AUTHENTICATE_USER } from '../services/mutations';
 
 const Login = () => {
   // routing
@@ -20,7 +14,7 @@ const Login = () => {
   const [message, setMessage] = useState(null);
 
   // Mutation to authenticate users in apollo
-  const [authenticateUser] = useMutation(AUTHENTICATE__USER);
+  const [authenticateUser] = useMutation(AUTHENTICATE_USER);
 
   const formik = useFormik({
     initialValues: {
@@ -54,22 +48,13 @@ const Login = () => {
         }, 2000);
       } catch (error) {
         setMessage(error.message.replace("GraphQL error: ", ""));
-        setTimeout(() => setMessage(null), 3000);
+        setTimeout(() => setMessage(null), 1500);
       }
     },
   });
 
-  const showMessage = () => {
-    return (
-      <div className="bg-white py-2 px-3 w-full my-3 max-w-sm text-center mx-auto">
-        <p>{message}</p>
-      </div>
-    );
-  };
-
   return (
     <Layout>
-      {message && showMessage()}
 
       <h1 className="text-center text-2xl text-white font-light">Login</h1>
       <div className="flex justify-center mt-5">
@@ -127,11 +112,10 @@ const Login = () => {
                 </div>
               ) : null}
             </div>
-
             <input
               type="submit"
               className="bg-gray-800 w-full mt-5 p-2 text-white hover:bg-gray-900"
-              value="Login"
+              value={message ? message : 'Login'}
             />
           </form>
         </div>

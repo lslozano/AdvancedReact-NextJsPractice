@@ -3,18 +3,10 @@ import { useRouter } from "next/router";
 import Layout from "../components/Layout";
 import { useFormik, yupToFormErrors } from "formik";
 import * as Yup from "yup";
-import { useMutation, gql } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 
-const NEW_USER = gql`
-  mutation newUser($input: UserInput) {
-    newUser(input: $input) {
-      id
-      name
-      lastName
-      email
-    }
-  }
-`;
+import { NEW_USER } from '../services/mutations';
+
 
 const SignUp = () => {
   // State of the message when user is registered
