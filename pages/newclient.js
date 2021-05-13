@@ -6,22 +6,22 @@ import * as Yup from "yup";
 import { useMutation } from "@apollo/client";
 import { useRouter } from "next/router";
 
-
-import { OBTAIN_CLIENTS_PER_SELLER } from '../services/queries';
-import { NEW_CLIENT } from '../services/mutations';
+import { OBTAIN_CLIENTS_PER_SELLER } from "../services/queries";
+import { NEW_CLIENT } from "../services/mutations";
 
 const NewClient = () => {
-
   const router = useRouter();
 
   const [message, setMessage] = useState(null);
 
   // Mutation to create new clients
-  const [ newClient ] = useMutation(NEW_CLIENT, {
+  const [newClient] = useMutation(NEW_CLIENT, {
     // updates copy of cache with the new data coming from newClient
     update(cache, { data: { newClient } }) {
       // Obtain the object of the cache that we want to update
-      const { obtainClientsPerSeller } = cache.readQuery({ query: OBTAIN_CLIENTS_PER_SELLER })
+      const { obtainClientsPerSeller } = cache.readQuery({
+        query: OBTAIN_CLIENTS_PER_SELLER,
+      });
 
       // Rewrite cache - cache must never be modified
       // With writeQuery you can rewrite without mutating the object.
@@ -29,11 +29,11 @@ const NewClient = () => {
         // What query you will use to modify
         // The data you will use to modify
         query: OBTAIN_CLIENTS_PER_SELLER,
-        data: { 
-          obtainClientsPerSeller: [...obtainClientsPerSeller, newClient]
-        }
-      })
-    }
+        data: {
+          obtainClientsPerSeller: [...obtainClientsPerSeller, newClient],
+        },
+      });
+    },
   });
 
   const formik = useFormik({
@@ -65,14 +65,14 @@ const NewClient = () => {
               lastName,
               company,
               email,
-              phone
-            }
-          }
+              phone,
+            },
+          },
         });
 
         router.push("/");
       } catch (error) {
-        setMessage(error.message.replace('GraphQL error: ', ''));
+        setMessage(error.message.replace("GraphQL error: ", ""));
 
         setTimeout(() => {
           setMessage(null);
@@ -83,12 +83,14 @@ const NewClient = () => {
 
   return (
     <Layout>
-      
       <h1 className="text-2xl text-gray-800 font-light">New Client</h1>
 
       <div className="flex justify-center mt-5">
         <div className="w-full max-w-lg">
-          <form className="bg-white shadow-med px-8 pt-6 pb-8 mb-4" onSubmit={formik.handleSubmit}>
+          <form
+            className="bg-white shadow-med px-8 pt-6 pb-8 mb-4"
+            onSubmit={formik.handleSubmit}
+          >
             <div className="mb-4">
               <label
                 className="block text-gray-700 text-sm font-bold mb-2"
@@ -108,11 +110,11 @@ const NewClient = () => {
             </div>
 
             {formik.touched.name && formik.errors.name ? (
-                <div className="my-2 bg-red-100 border-l-4 border-red-500 text-red-700 p-4">
-                  <p className="font-bold">Error</p>
-                  <p>{formik.errors.name}</p>
-                </div>
-              ) : null}
+              <div className="my-2 bg-red-100 border-l-4 border-red-500 text-red-700 p-4">
+                <p className="font-bold">Error</p>
+                <p>{formik.errors.name}</p>
+              </div>
+            ) : null}
 
             <div className="mb-4">
               <label
@@ -133,11 +135,11 @@ const NewClient = () => {
             </div>
 
             {formik.touched.lastName && formik.errors.lastName ? (
-                <div className="my-2 bg-red-100 border-l-4 border-red-500 text-red-700 p-4">
-                  <p className="font-bold">Error</p>
-                  <p>{formik.errors.lastName}</p>
-                </div>
-              ) : null}
+              <div className="my-2 bg-red-100 border-l-4 border-red-500 text-red-700 p-4">
+                <p className="font-bold">Error</p>
+                <p>{formik.errors.lastName}</p>
+              </div>
+            ) : null}
 
             <div className="mb-4">
               <label
@@ -158,11 +160,11 @@ const NewClient = () => {
             </div>
 
             {formik.touched.company && formik.errors.company ? (
-                <div className="my-2 bg-red-100 border-l-4 border-red-500 text-red-700 p-4">
-                  <p className="font-bold">Error</p>
-                  <p>{formik.errors.company}</p>
-                </div>
-              ) : null}
+              <div className="my-2 bg-red-100 border-l-4 border-red-500 text-red-700 p-4">
+                <p className="font-bold">Error</p>
+                <p>{formik.errors.company}</p>
+              </div>
+            ) : null}
 
             <div className="mb-4">
               <label
@@ -183,11 +185,11 @@ const NewClient = () => {
             </div>
 
             {formik.touched.email && formik.errors.email ? (
-                <div className="my-2 bg-red-100 border-l-4 border-red-500 text-red-700 p-4">
-                  <p className="font-bold">Error</p>
-                  <p>{formik.errors.email}</p>
-                </div>
-              ) : null}
+              <div className="my-2 bg-red-100 border-l-4 border-red-500 text-red-700 p-4">
+                <p className="font-bold">Error</p>
+                <p>{formik.errors.email}</p>
+              </div>
+            ) : null}
 
             <div className="mb-4">
               <label
@@ -206,11 +208,15 @@ const NewClient = () => {
                 onBlur={formik.handleBlur}
               />
             </div>
-              <input
-                type="submit"
-                className={message ? "bg-red-100 w-full mt-5 p-2 upperacase" : "bg-gray-800 w-full mt-5 p-2 text-white upperacase font-bold hover:bg-gray-900"}
-                value={message ? message : 'Register client'}
-              />
+            <input
+              type="submit"
+              className={
+                message
+                  ? "bg-red-100 w-full mt-5 p-2 upperacase"
+                  : "bg-gray-800 w-full mt-5 p-2 text-white upperacase font-bold hover:bg-gray-900"
+              }
+              value={message ? message : "Register client"}
+            />
           </form>
         </div>
       </div>

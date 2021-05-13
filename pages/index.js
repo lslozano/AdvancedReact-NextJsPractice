@@ -38,7 +38,7 @@ const Index = () => {
   }
 
   return (
-    <div>
+    <>
       <Layout>
         <h1 className="text-2xl text-gray-800 font-light">Clients</h1>
         <Link href="/newclient">
@@ -52,6 +52,7 @@ const Index = () => {
               <th className="w-1/5 py-2">Company</th>
               <th className="w-1/5 py-2">Email</th>
               <th className="w-1/5 py-2">Delete</th>
+              <th className="w-1/5 py-2">Edit</th>
             </tr>
           </thead>
 
@@ -62,7 +63,7 @@ const Index = () => {
           </tbody>
         </table>
       </Layout>
-    </div>
+    </>
   );
 };
 
