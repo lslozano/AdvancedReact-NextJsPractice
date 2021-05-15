@@ -37,7 +37,7 @@ export const UPDATE_CLIENT = gql`
     updateClient(id: $id, input: $input) {
       id
       name
-      lasstName
+      lastName
       company
       email
       phone

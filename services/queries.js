@@ -18,6 +18,7 @@ export const OBTAIN_CLIENTS_PER_SELLER = gql`
 export const OBTAIN_CLIENT = gql`
   query obtainClient($id: ID!) {
     obtainClient(id: $id) {
+      id
       name
       lastName
       company

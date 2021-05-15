@@ -5,6 +5,8 @@ import * as Yup from "yup";
 import { useMutation } from "@apollo/client";
 import { useRouter } from "next/router";
 
+import Error from '../components/Error';
+
 import { AUTHENTICATE_USER } from '../services/mutations';
 
 const Login = () => {
@@ -80,12 +82,7 @@ const Login = () => {
                 onBlur={formik.handleBlur}
               />
 
-              {formik.touched.email && formik.errors.email ? (
-                <div className="my-2 bg-red-100 border-l-4 border-red-500 text-red-700 p-4">
-                  <p className="font-bold">Error</p>
-                  <p>{formik.errors.email}</p>
-                </div>
-              ) : null}
+              <Error touched={formik.touched.email} error={formik.errors.email} />
             </div>
 
             <div className="mb-4">
@@ -105,12 +102,7 @@ const Login = () => {
                 onBlur={formik.handleBlur}
               />
 
-              {formik.touched.password && formik.errors.password ? (
-                <div className="my-2 bg-red-100 border-l-4 border-red-500 text-red-700 p-4">
-                  <p className="font-bold">Error</p>
-                  <p>{formik.errors.password}</p>
-                </div>
-              ) : null}
+              <Error touched={formik.touched.password} error={formik.errors.password} />
             </div>
             <input
               type="submit"

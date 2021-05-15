@@ -12,7 +12,7 @@ import { NEW_CLIENT } from "../services/mutations";
 const NewClient = () => {
   const router = useRouter();
 
-  const [message, setMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   // Mutation to create new clients
   const [newClient] = useMutation(NEW_CLIENT, {
@@ -72,14 +72,21 @@ const NewClient = () => {
 
         router.push("/");
       } catch (error) {
-        setMessage(error.message.replace("GraphQL error: ", ""));
+        setErrorMessage(error.message.replace("GraphQL error: ", ""));
 
         setTimeout(() => {
-          setMessage(null);
+          setErrorMessage(null);
         }, 1500);
       }
     },
   });
+
+  const stylesForInputOn = (message) => {
+    const stylesForError = 'bg-red-100 w-full mt-5 p-2 upperacase';
+    const stylesForRegister = 'bg-gray-800 w-full mt-5 p-2 text-white upperacase font-bold hover:bg-gray-900';
+    
+    return errorMessage ? stylesForError : stylesForRegister;
+  }
 
   return (
     <Layout>
@@ -109,12 +116,7 @@ const NewClient = () => {
               />
             </div>
 
-            {formik.touched.name && formik.errors.name ? (
-              <div className="my-2 bg-red-100 border-l-4 border-red-500 text-red-700 p-4">
-                <p className="font-bold">Error</p>
-                <p>{formik.errors.name}</p>
-              </div>
-            ) : null}
+            <Error touched={formik.touched.name} error={formik.errors.name} />
 
             <div className="mb-4">
               <label
@@ -134,12 +136,7 @@ const NewClient = () => {
               />
             </div>
 
-            {formik.touched.lastName && formik.errors.lastName ? (
-              <div className="my-2 bg-red-100 border-l-4 border-red-500 text-red-700 p-4">
-                <p className="font-bold">Error</p>
-                <p>{formik.errors.lastName}</p>
-              </div>
-            ) : null}
+            <Error touched={formik.touched.lastName} error={formik.errors.lastName} />
 
             <div className="mb-4">
               <label
@@ -159,12 +156,7 @@ const NewClient = () => {
               />
             </div>
 
-            {formik.touched.company && formik.errors.company ? (
-              <div className="my-2 bg-red-100 border-l-4 border-red-500 text-red-700 p-4">
-                <p className="font-bold">Error</p>
-                <p>{formik.errors.company}</p>
-              </div>
-            ) : null}
+            <Error touched={formik.touched.company} error={formik.errors.company} />
 
             <div className="mb-4">
               <label
@@ -184,12 +176,7 @@ const NewClient = () => {
               />
             </div>
 
-            {formik.touched.email && formik.errors.email ? (
-              <div className="my-2 bg-red-100 border-l-4 border-red-500 text-red-700 p-4">
-                <p className="font-bold">Error</p>
-                <p>{formik.errors.email}</p>
-              </div>
-            ) : null}
+            <Error touched={formik.touched.email} error={formik.errors.email} />
 
             <div className="mb-4">
               <label
@@ -211,11 +198,11 @@ const NewClient = () => {
             <input
               type="submit"
               className={
-                message
+                errorMessage
                   ? "bg-red-100 w-full mt-5 p-2 upperacase"
                   : "bg-gray-800 w-full mt-5 p-2 text-white upperacase font-bold hover:bg-gray-900"
               }
-              value={message ? message : "Register client"}
+              value={errorMessage ? errorMessage : "Register client"}
             />
           </form>
         </div>

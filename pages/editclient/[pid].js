@@ -2,9 +2,11 @@ import React from "react";
 import { useRouter } from "next/router";
 import { useQuery, useMutation } from "@apollo/client";
 import { Formik } from "formik";
+import Swal from "sweetalert2";
 import * as Yup from "yup";
 
 import Layout from "../../components/Layout";
+import Error from '../../components/Error';
 
 import { OBTAIN_CLIENT } from "../../services/queries";
 import { UPDATE_CLIENT } from "../../services/mutations";
@@ -23,31 +25,48 @@ const EditClient = () => {
   });
 
   // Set up the update client mutation
-  const [updateClient] = useMutation(UPDATE_CLIENT);
-
-  if (loading) return "Loading...";
-
-  // If there is no data, push to home
-  if (data === null || data === undefined) {
-    return router.push("/");
-  }
-
-  const { obtainClient } = data;
-
+  const [updateClient] = useMutation(UPDATE_CLIENT);  
+  
   const validationSchemaForValueFields = Yup.object({
     name: Yup.string().required("The name of the client is required."),
     lastName: Yup.string().required("The last name of the client is required."),
     company: Yup.string().required("The company is required."),
     email: Yup.string()
-      .email("Not a valid email.")
-      .required("The email of the client is required."),
+    .email("Not a valid email.")
+    .required("The email of the client is required."),
   });
 
+  if (loading) return "Loading...";
+
+  const { obtainClient } = data;
+
   // Modify client in DB
-  const updateClientInfoWithNew = async values => {
+  const updateClientInfoWith = async values => {
     const { name, lastName, company, email, phone } = values;
-    console.log(name, lastName, company, email, phone);
-  }
+
+    try {
+      const { data } = await updateClient({
+        variables: { 
+          id,
+          input: { 
+            name,
+            lastName,
+            company,
+            email,
+            phone,
+          },
+        },
+      });
+
+      Swal.fire('Edit successful!', 'The client information was updated.', 'success')
+
+      router.push('/');
+    } catch (error) {
+      console.log(error);
+
+      // To do: Set message on input if something went wrong.
+    }
+  };
 
   return (
     <Layout>
@@ -59,7 +78,7 @@ const EditClient = () => {
             enableReinitialize
             initialValues={obtainClient}
             onSubmit={(values) => {
-              updateClientInfoWithNew(values)
+              updateClientInfoWith(values)
             }}
           >
             {(props) => {
@@ -80,18 +99,13 @@ const EditClient = () => {
                       id="name"
                       type="text"
                       placeholder="First name"
-                      value={props.name}
                       onChange={props.handleChange}
                       onBlur={props.handleBlur}
+                      value={props.values.name}
                     />
                   </div>
 
-                  {props.touched.name && props.errors.name ? (
-                    <div className="my-2 bg-red-100 border-l-4 border-red-500 text-red-700 p-4">
-                      <p className="font-bold">Error</p>
-                      <p>{props.errors.name}</p>
-                    </div>
-                  ) : null}
+                  <Error touched={props.touched.name} error={props.errors.name} />
 
                   <div className="mb-4">
                     <label
@@ -105,18 +119,13 @@ const EditClient = () => {
                       id="lastName"
                       type="text"
                       placeholder="Last name"
-                      value={props.lastName}
                       onChange={props.handleChange}
                       onBlur={props.handleBlur}
+                      value={props.values.lastName}
                     />
                   </div>
 
-                  {props.touched.lastName && props.errors.lastName ? (
-                    <div className="my-2 bg-red-100 border-l-4 border-red-500 text-red-700 p-4">
-                      <p className="font-bold">Error</p>
-                      <p>{props.errors.lastName}</p>
-                    </div>
-                  ) : null}
+                  <Error touched={props.touched.lastName} error={props.errors.lastName} />
 
                   <div className="mb-4">
                     <label
@@ -130,18 +139,13 @@ const EditClient = () => {
                       id="company"
                       type="text"
                       placeholder="Company"
-                      value={props.company}
                       onChange={props.handleChange}
                       onBlur={props.handleBlur}
+                      value={props.values.company}
                     />
                   </div>
 
-                  {props.touched.company && props.errors.company ? (
-                    <div className="my-2 bg-red-100 border-l-4 border-red-500 text-red-700 p-4">
-                      <p className="font-bold">Error</p>
-                      <p>{props.errors.company}</p>
-                    </div>
-                  ) : null}
+                  <Error touched={props.touched.company} error={props.errors.company} />
 
                   <div className="mb-4">
                     <label
@@ -155,18 +159,13 @@ const EditClient = () => {
                       id="email"
                       type="text"
                       placeholder="Email"
-                      value={props.email}
                       onChange={props.handleChange}
                       onBlur={props.handleBlur}
+                      value={props.values.email}
                     />
                   </div>
 
-                  {props.touched.email && props.errors.email ? (
-                    <div className="my-2 bg-red-100 border-l-4 border-red-500 text-red-700 p-4">
-                      <p className="font-bold">Error</p>
-                      <p>{props.errors.email}</p>
-                    </div>
-                  ) : null}
+                  <Error touched={props.touched.email} error={props.errors.email} />
 
                   <div className="mb-4">
                     <label
@@ -180,9 +179,9 @@ const EditClient = () => {
                       id="phone"
                       type="tel"
                       placeholder="Phone number"
-                      value={props.phone}
                       onChange={props.handleChange}
                       onBlur={props.handleBlur}
+                      value={props.values.phone}
                     />
                   </div>
                   <input
